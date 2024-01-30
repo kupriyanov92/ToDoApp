@@ -75,12 +75,40 @@
         let todoAppTitle = createAppTitle('Список дел');
         let todoItemForm = createTodoItemForm();
         let todoList = createTodoList();
-        let todoItems = [createTodoItem('Сходить за хлебом'), createTodoItem('Купить молоко')];
 
         container.append(todoAppTitle);
         container.append(todoItemForm.form);
         container.append(todoList);
-        todoList.append(todoItems[0].item);
-        todoList.append(todoItems[1].item);
+
+        //браузер создает событе submit на форме по нажатию на Enter или кнопку создания дела
+        todoItemForm.form.addEventListener('submit', function(e) {
+            //эта строчка необходима что бы предотвратить стандартное действие браузера
+            //в данном случае мы не хотим что бы страница перезагружалась при отправке формы
+            e.preventDefault();
+
+            //игнорируем создание элемента если пользоватль не ввел вп поле 
+            if (!todoItemForm.input.value) {
+                return;
+            }
+
+            let todoItem = createTodoItem(todoItemForm.input.value);
+
+            //добавляем обработчик событи на кнопки
+            todoItem.doneButton.addEventListener('click', function(){
+                todoItem.item.classList.toggle('list-group-item-success')
+            });
+            todoItem.deleteButton.addEventListener('click',function() {
+                if (confirm(' Вы уверены?')) {
+                    todoItem.item.remove();
+                }
+        
+            })
+            // создаем и добавляем в список нвое дело с названием из поля для ввода
+            todoList.append(createTodoItem(todoItemForm.input.value).item);
+
+            //обнуляем значение в поле что бы не пришлось стирать его в ручную
+            todoItemForm.input.value = '';
+
+        })
     })
 })();
